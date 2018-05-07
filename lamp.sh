@@ -17,16 +17,19 @@ systemctl enable $1
 #install apache|httpd
 
 install_apache2() {
-echo "cp /tmp/httpd.conf $httpdir/conf.d/"
 $package install $apache2
 cp `pwd`/cgi-enabled.conf $httpdir/
 start_service $apache2
 }
 
 #install nginx
+
 install_nginx() {
-echo "$package install -y $nginx"
-start_service $nginx
+echo "nginx not supported right now, instaling apache2"
+install_apache2
+#$package install -y $ngdepnd
+#$package install -y $nginx
+#start_service $nginx
 }
 
 install_mysql() {
@@ -47,7 +50,7 @@ start_service $mariadb
 install_php() {
 $package install -y $php
 cp "$tmp"index.php $appdir
-index-index.php
+index=index.php
 }
 
 install_perl() {
@@ -67,8 +70,8 @@ index=index.py
 
 #identifay the OS
 
-OS=`cat /etc/*-release | grep -i id_like | awk -F= '{ print $2}'`
-
+#OS=`cat /etc/*-release | grep -i id_like | awk -F= '{ print $2}'`
+OS=`cat /etc/*-release | grep -i id`
 
 case $OS in
 	*ubuntu*|*debian*)
@@ -79,6 +82,7 @@ case $OS in
 		install_$DB
 		read -p "which programming language would you like to install? (php|perl|python)" lang
 		install_$lang
+		echo "every thing is set, go to your localhost/"$index""
 		;;
 	*redhat*|*rhel*)
 		source `pwd`/redhat.cfg
@@ -88,12 +92,10 @@ case $OS in
 		install_$DB
 		read -p "which programming language would you like to install? (php|perl|python)" lang
 		install_$lang
+		echo "every thing is set, go to your localhost/"$index""
 		;;
 	*)
 		echo "not supported"
 		;;
 
 esac
-
-sleep 1
-echo "every thing is set, go to your localhost/"$index""
